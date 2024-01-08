@@ -1,5 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
+import soundTabReducer, { initialState } from "../state/reducers/soundTabReducers";
+
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {soundTab: soundTabReducer},
+  initialState,
 });

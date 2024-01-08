@@ -8,22 +8,17 @@ import Header from "../components/Header";
 import ButtonTabs from "../components/ButtonTabs";
 import Sounds from "../components/Sounds";
 import FlagButton from "../components/Canvas/FlagButton";
+import { useDispatch, useSelector } from "react-redux";
+
 
 const Home = () => {
-  const [sound, setSound] = useState(false);
-  const [activeTab, setActiveTab] = useState("Home");
-
-  const handleTab = (value) => {
-    setSound(value);
-    if (value === true) setActiveTab("Sounds");
-    else setActiveTab("Home");
-  };
+  const active = useSelector(state => state.soundTab.activeTab);
+ 
 
   return (
     <div>
-      <Header />
-
-      <ButtonTabs onClick={handleTab} active={activeTab} />
+      <Header />      
+      <ButtonTabs />
 
       <div style={{ textAlign: "center" }}></div>
       <div
@@ -33,7 +28,7 @@ const Home = () => {
           marginTop: "20px",
         }}
       >
-        {sound ? <Sounds /> : <BlocklyComponent />}
+        {active === "Sounds" ? <Sounds /> : <BlocklyComponent />}
         <Canvas />
       </div>
       <AnchorMenu />

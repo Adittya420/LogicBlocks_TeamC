@@ -1,6 +1,12 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveTab } from "../state/reducers/soundTabReducers";
+
+
 
 function ButtonTabs(props) {
+    const dispatch = useDispatch();
+    const active = useSelector((state) => state.soundTab.activeTab);    
     const buttonStyles = {
         backgroundColor: "#cccccc",
         flexBasis: "100px",
@@ -25,10 +31,8 @@ function ButtonTabs(props) {
         transform: "scale(1.1)"        
     }
 
-    const handleButtonClick = (value) => {
-        if (props.onClick) {
-            props.onClick(value === "Sounds");
-        }
+    const handleButtonClick = (value) => {            
+        dispatch(setActiveTab(value));              
     }
 
     return (
@@ -38,10 +42,9 @@ function ButtonTabs(props) {
             height: "2.5rem",
             display: "flex",
             gap: "10px"
-        }}>
-            {/* <button style={{...buttonStyles, backgroundColor: props.active === "Home" ? "white" : "#cccccc"}} onClick={() => handleButtonClick("Home")}>Home</button> */}
-            <button style={props.active === "Home" ? activeButton : buttonStyles} onClick={() => handleButtonClick("Home")}>Home</button>
-            <button style={props.active === "Sounds" ? activeButton : buttonStyles} onClick={() => handleButtonClick("Sounds")}>Sounds</button>
+        }}>            
+            <button style={active == "Home" ? activeButton : buttonStyles} onClick={() => handleButtonClick("Home")}>Home</button>
+            <button style={active == "Sounds" ? activeButton : buttonStyles} onClick={() => handleButtonClick("Sounds")}>Sounds</button>
         </div>
     )
 }

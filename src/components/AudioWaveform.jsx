@@ -5,7 +5,7 @@ import { FileContext } from "../contexts/fileContext.jsx";
 import wavesurfer from "wavesurfer.js";
 
 
-const AudioWaveform = () => {
+const AudioWaveform = (props) => {
   const wavesurferRef = useRef(null);
   const timelineRef = useRef(null);
 
@@ -75,7 +75,7 @@ const AudioWaveform = () => {
     if (wavesurferObj) {
       // once the waveform is ready, play the audio
       wavesurferObj.on("ready", () => {
-        wavesurferObj.play();
+        // wavesurferObj.play();
         wavesurferObj.enableDragSelection({}); // to select the region to be trimmed
         setDuration(Math.floor(wavesurferObj.getDuration())); // set the duration in local state
       });
@@ -387,6 +387,7 @@ const AudioWaveform = () => {
 
   return (
     <section className="waveform-container">
+      {props.filename ? (<h1>{props.filename}</h1>) : (<h1>Default_music</h1>)}
       <div ref={wavesurferRef} id="waveform" />
       {/* <div ref={timelineRef} id="wave-timeline" /> */}
       <div className="all-controls">
@@ -397,9 +398,9 @@ const AudioWaveform = () => {
             onClick={handlePlayPause}
           >
             {playing ? (
-              <i className="material-icons">pause</i>
-            ) : (
               <i className="material-icons">play_arrow</i>
+            ) : (
+              <i className="material-icons">pause</i>
             )}
           </button>
           <button title="reload" className="controls" onClick={handleReload}>

@@ -1,5 +1,6 @@
 // Updated BlocklyComponent.jsx
 import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Blockly from "blockly";
 import { Logic } from "./BlockCategories/Logic";
 import { Loops } from "./BlockCategories/Loops";
@@ -21,9 +22,17 @@ const BlocklyComponent = () => {
     setGeneratedCode(code);
     await eval(`(async () => { ${code} })();`);
   };
+  const [generatedCode, setGeneratedCode] = useState("");
+  const workspace = Blockly.getMainWorkspace();
 
-  useEffect(() => {
-    if (blocklyRef.current === null) {
+  const generateCode = async () => {
+    javascriptGenerator.addReservedWords("code");
+    var code = javascriptGenerator.workspaceToCode(workspace);
+    setGeneratedCode(code);
+    await eval(`(async () => { ${code} })();`);
+  };
+
+  useEffect(() => {    
       // Initialize Blockly with English
       Blockly.setLocale("en");
       // Construct the complete toolbox XML

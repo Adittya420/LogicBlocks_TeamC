@@ -33,7 +33,7 @@ Blockly.Blocks["play_sound"] = {
     this.appendDummyInput().appendField("Play Sound");
     this.appendDummyInput()
       .appendField("Sound Name:")
-      .appendField(new Blockly.FieldTextInput("meow"), "SOUND_NAME");
+      .appendField(new Blockly.FieldTextInput("defaultsound"), "SOUND_NAME");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(230);
