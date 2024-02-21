@@ -9,7 +9,7 @@ const detectSlice = createSlice({
   initialState: initialState,
   reducers: {
     setDetectedObjs: (state, action) => {
-      state.object = action.payload;
+      state.objectArr = action.payload;
     },
   },
 });

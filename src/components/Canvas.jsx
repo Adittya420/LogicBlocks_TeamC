@@ -61,8 +61,7 @@ const Canvas = () => {
 
       // Make Detections
 
-      const obj = await net.detect(video);
-      console.log(obj);
+      const obj = await net.detect(video);      
       dispatch(setDetectedObjs(obj));
 
       // if ((obj.find(el => el.class == 'cell phone'))) {
@@ -110,7 +109,7 @@ const Canvas = () => {
         class="highlighted"
         style={{
           position: "relative",
-          width: "700px",
+          width: "600px",
           margin: "28px auto",
           height: "600px",
           overflow: "hidden",
