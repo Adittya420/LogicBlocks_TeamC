@@ -33,9 +33,7 @@ body {
 
 .card {
   box-sizing: border-box;
-  margin-bottom: 10px;
-  margin-left: 25px;
-  margin-top: 10px;
+  margin: 10px auto;
   width: 120px;
   height: 120px;
   background: rgba(217, 217, 217, 0.58);

@@ -35,7 +35,7 @@ Blockly.Blocks["play_sound"] = {
 javascriptGenerator["play_sound"] = function (block) {
   var soundName = block.getFieldValue("SOUND_NAME");
   var code = `      
-  const audioUrl = playSound(); 
+  const audioUrl = playSound("${soundName}"); 
   const audio = new Audio(audioUrl);     
   dispatch(setAudioObj(audio));
   `;
@@ -46,10 +46,7 @@ javascriptGenerator["play_sound"] = function (block) {
 // Define the 'start_sound' block
 Blockly.Blocks["start_sound"] = {
   init: function () {
-    this.appendDummyInput().appendField("Start Sound");
-    this.appendDummyInput()
-      .appendField("Sound Name:")
-      .appendField(new Blockly.FieldTextInput("defaultsound"), "SOUND_NAME");
+    this.appendDummyInput().appendField("Start Sound");    
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(230);
