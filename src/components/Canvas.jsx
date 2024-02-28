@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as tf from "@tensorflow/tfjs";
 import * as cocossd from "@tensorflow-models/coco-ssd";
-
+import { Button, ListItemIcon, ListItemText, Switch } from "@mui/material";
 import { Card } from "@mui/material";
 import Draggable from "react-draggable";
 import { Resizable } from "re-resizable";
@@ -27,6 +27,9 @@ const Canvas = () => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
+  const [Detect, setDetect] = useState(false);
+  const [Label, setLabel] = useState(false);
+
   const dispatch = useDispatch();
 
   const runCoco = async () => {
@@ -37,6 +40,18 @@ const Canvas = () => {
     setInterval(() => {
       detect(net);
     });
+  };
+
+  const handleToggleCamera = () => {
+    console.log("Dosnt Work");
+  };
+
+  const handleDetect = () => {
+    setDetect((prev) => !prev);
+  };
+
+  const handleLabel = () => {
+    setLabel((prev) => !prev);
   };
 
   const detect = async (net) => {
@@ -82,6 +97,8 @@ const Canvas = () => {
     }
   };
 
+  // utilities.js
+
   // const[person,setperson] = useState("")
   useEffect(() => {
     // Speech()
@@ -106,10 +123,60 @@ const Canvas = () => {
 
   return (
     <div>
-      <Card class="highlighted" style={{ position: 'relative', width: '650px', margin: '28px auto', height: '600px', overflow: 'hidden', background: `url(localVideo)` }}>
-        <h1 style={{ textAlign: 'center', fontSize: '14px' }}>Canvas</h1>
-        {isCameraOn && <video id="localVideo" autoplay playsinline controls={false} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -100 }} />}
-        <Draggable bounds="parent" position={position} defaultPosition={position} style={{ transform: `rotate(100deg)` }}>
+      <Card
+        class="highlighted"
+        style={{
+          position: "relative",
+          width: "700px",
+          margin: "28px auto",
+          height: "600px",
+          overflow: "hidden",
+          background: `url(localVideo)`,
+        }}
+      >
+        <h1 style={{ textAlign: "center", fontSize: "14px" }}>Canvas</h1>
+        {isCameraOn && (
+          <header className="App-header">
+            <Webcam
+              ref={webcamRef}
+              muted={true}
+              style={{
+                position: "absolute",
+                marginLeft: "auto",
+                marginRight: "auto",
+                left: 0,
+                right: 0,
+                textAlign: "center",
+                zindex: 9,
+                width: 640,
+                height: 480,
+              }}
+            />
+
+            {Detect && (
+              <canvas
+                ref={canvasRef}
+                style={{
+                  position: "absolute",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  left: 0,
+                  right: 0,
+                  textAlign: "center",
+                  zindex: 8,
+                  width: 640,
+                  height: 480,
+                }}
+              />
+            )}
+          </header>
+        )}
+        <Draggable
+          bounds="parent"
+          position={position}
+          defaultPosition={position}
+          style={{ transform: `rotate(100deg)` }}
+        >
           <Resizable
             id="sprite"
             defaultSize={{
@@ -150,6 +217,30 @@ const Canvas = () => {
             <ZoomIn onClick={() => {}} />
             <ZoomOut onClick={() => {}} />
             <FullScreen onClick={() => {}} />
+          </div>
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            bottom: 30,
+            right: 10,
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <div style={{ paddingLeft: "10px" }}>
+            <Button onClick={handleDetect}>
+              Detect
+              <Switch
+                checked={Detect && isCameraOn}
+                // onChange={handleToggleCamera}
+              />
+            </Button>
+            <Button onClick={handleLabel}>
+              Label
+              <Switch checked={Label && Detect} onChange={handleToggleCamera} />
+            </Button>
           </div>
         </div>
       </Card>

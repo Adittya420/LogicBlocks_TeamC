@@ -5,7 +5,7 @@ export const drawRect = (detections, ctx) => {
 
     const color = "green";
     ctx.strokeStyle = color;
-    ctx.font = "38px Arial";
+    ctx.font = "18px Arial";
     ctx.fillStyle = color;
 
     ctx.beginPath();
