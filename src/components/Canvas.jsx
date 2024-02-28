@@ -30,6 +30,8 @@ const Canvas = () => {
   const [Detect, setDetect] = useState(false);
   const [Label, setLabel] = useState(false);
 
+  const detectedObj = useSelector(state => state.detect.objectArr);
+
   const dispatch = useDispatch();
 
   const runCoco = async () => {
@@ -133,6 +135,7 @@ const Canvas = () => {
           background: `url(localVideo)`,
         }}
       >
+        {Label && <div>{detectedObj.map(obj => `Detected object: ${obj.class}`).join('\n')}</div>}
         <h1 style={{ textAlign: "center", fontSize: "14px" }}>Canvas</h1>
         {isCameraOn && (
           <header className="App-header">
@@ -228,19 +231,21 @@ const Canvas = () => {
             width: "100%",
           }}
         >
-          <div style={{ paddingLeft: "10px" }}>
-            <Button onClick={handleDetect}>
-              Detect
-              <Switch
-                checked={Detect && isCameraOn}
-                // onChange={handleToggleCamera}
-              />
-            </Button>
-            <Button onClick={handleLabel}>
-              Label
-              <Switch checked={Label && Detect} onChange={handleToggleCamera} />
-            </Button>
-          </div>
+          {isCameraOn && 
+              <div style={{ paddingLeft: "10px" }}>
+              <Button onClick={handleDetect}>
+                Detect
+                <Switch
+                  checked={Detect}
+                  // onChange={handleToggleCamera}
+                />
+              </Button>
+              <Button onClick={handleLabel}>
+                Label
+                <Switch checked={Label && Detect} onChange={handleToggleCamera} />
+              </Button>
+            </div>
+          }
         </div>
       </Card>
     </div>

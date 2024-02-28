@@ -9,7 +9,7 @@ export const drawRect = (detections, ctx) => {
     ctx.fillStyle = color;
 
     ctx.beginPath();
-    ctx.fillText(text, x, y);
+    // ctx.fillText(text, x, y);
     ctx.rect(x, y, width, height);
     ctx.stroke();
   });
