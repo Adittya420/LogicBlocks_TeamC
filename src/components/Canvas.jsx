@@ -61,8 +61,7 @@ const Canvas = () => {
 
       // Make Detections
 
-      const obj = await net.detect(video);
-      console.log(obj);
+      const obj = await net.detect(video);      
       dispatch(setDetectedObjs(obj));
 
       // if ((obj.find(el => el.class == 'cell phone'))) {
@@ -106,10 +105,58 @@ const Canvas = () => {
 
   return (
     <div>
-      <Card class="highlighted" style={{ position: 'relative', width: '650px', margin: '28px auto', height: '600px', overflow: 'hidden', background: `url(localVideo)` }}>
-        <h1 style={{ textAlign: 'center', fontSize: '14px' }}>Canvas</h1>
-        {isCameraOn && <video id="localVideo" autoplay playsinline controls={false} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -100 }} />}
-        <Draggable bounds="parent" position={position} defaultPosition={position} style={{ transform: `rotate(100deg)` }}>
+      <Card
+        class="highlighted"
+        style={{
+          position: "relative",
+          width: "600px",
+          margin: "28px auto",
+          height: "600px",
+          overflow: "hidden",
+          background: `url(localVideo)`,
+        }}
+      >
+        <h1 style={{ textAlign: "center", fontSize: "14px" }}>Canvas</h1>
+        {isCameraOn && (
+          <header className="App-header">
+            <Webcam
+              ref={webcamRef}
+              muted={true}
+              style={{
+                position: "absolute",
+                marginLeft: "auto",
+                marginRight: "auto",
+                left: 0,
+                right: 0,
+                textAlign: "center",
+                zindex: 9,
+                width: 640,
+                height: 480,
+              }}
+            />
+
+            <canvas
+              ref={canvasRef}
+              style={{
+                position: "absolute",
+                marginLeft: "auto",
+                marginRight: "auto",
+                left: 0,
+                right: 0,
+                textAlign: "center",
+                zindex: 8,
+                width: 640,
+                height: 480,
+              }}
+            />
+          </header>
+        )}
+        <Draggable
+          bounds="parent"
+          position={position}
+          defaultPosition={position}
+          style={{ transform: `rotate(100deg)` }}
+        >
           <Resizable
             id="sprite"
             defaultSize={{

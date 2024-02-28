@@ -1,5 +1,7 @@
 import Blockly from "blockly";
 import { javascriptGenerator } from "blockly/javascript";
+import { useSelector } from "react-redux";
+
 
 export const Object = `
   <category name="Object" colour="">
@@ -17,8 +19,8 @@ Blockly.Blocks["detect_object"] = {
   },
 };
 
-javascriptGenerator["detect_object"] = function (block) {
-  var code = ``;
+javascriptGenerator["detect_object"] = function (block) {  
+  var code = `detect_object`;
   console.log(code);
   return code;
 };
