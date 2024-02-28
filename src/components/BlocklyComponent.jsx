@@ -52,7 +52,9 @@ const BlocklyComponent = () => {
   const workspace = Blockly.getMainWorkspace();
   const { codeString } = useSelector((state) => ({
     codeString: state.code.codeString,
-  }))
+  }));  
+  const detectedObj = useSelector(state => state.detect.objectArr);
+  const [detectedObjectsCode, setdetectedObjectsCode] = useState(false);  
   
   const audioArray = useSelector(state => state.soundTab.audioArray);
   const audioObj = useSelector(state => state.audio.audioObj);
@@ -60,17 +62,32 @@ const BlocklyComponent = () => {
   const generateCode = async () => {
     javascriptGenerator.addReservedWords("code");
     const code = javascriptGenerator.workspaceToCode(workspace);
-    dispatch(setCodeString(code));
-    await eval(`(async () => { ${code} })();`);
+    if(code === "detect_object"){
+      setdetectedObjectsCode(true);
+    }
+    else{
+      dispatch(setCodeString(code));
+      await eval(`(async () => { ${code} })();`);
+    }
+
   };
 
   const displayCodeString = () => {
     const copyString = codeString;
+    var detectedObjString = "";
+    if(detectedObjectsCode)
+      detectedObjString = detectedObj.map(obj => `Detected object: ${obj.class}`).join('\n')
+
     // Use a regular expression to remove store.dispatch() calls for display and display inner contents
-    return copyString.replace(/store\.dispatch\((.*?)\);/g, "sprite.$1");
+    return detectedObjString + "\n" +copyString.replace(/store\.dispatch\((.*?)\);/g, "sprite.$1");
     // Use the below rather than the above to debug the code if required as it displays perfect code
     // return copyString;
   };
+
+  // function getObjects(){    
+  //   // Format the detected objects as code    
+  //   console.log();
+  // }
 
   // To handle Wavesurfer object
   useEffect(() => {

@@ -77,7 +77,6 @@ const Canvas = () => {
       // Make Detections
 
       const obj = await net.detect(video);
-      console.log(obj);
       dispatch(setDetectedObjs(obj));
 
       // if ((obj.find(el => el.class == 'cell phone'))) {
