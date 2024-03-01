@@ -29,10 +29,7 @@ const Canvas = () => {
   const isCameraOn = useSelector((state) => state.camera.isCameraOn);
   // const [net, setNet] = useState(null);
   const webcamRef = useRef(null);
-  const canvasRef = useRef(null);
-
-  // const [Detect, setDetect] = useState(false);
-  // const [Label, setLabel] = useState(false);
+  const canvasRef = useRef(null); 
 
   const detectedObj = useSelector((state) => state.detect.objectArr);
   const label = useSelector((state) => state.detect.label);
@@ -69,7 +66,8 @@ const Canvas = () => {
     if (
       typeof webcamRef.current !== "undefined" &&
       webcamRef.current !== null &&
-      webcamRef.current.video.readyState === 4
+      webcamRef.current.video.readyState === 4 &&
+      canvasRef.current !== null
     ) {
       // Get Video Properties
       const video = webcamRef.current.video;

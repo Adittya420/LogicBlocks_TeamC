@@ -34,6 +34,7 @@ import { waitSeconds, repeatTimes } from "../features/controlSlice";
 import { setCodeString } from "../features/codeSlice";
 import { setAudioObj } from "../features/audioSlice.js";
 import { Object } from "./BlockCategories/Object.jsx";
+import { setLabel, setDetectRec } from "../features/detection.js";
 
 function getFileName() {
   const activeWaveform = useSelector((state) => state.soundTab.activeWaveform);
@@ -59,16 +60,25 @@ const BlocklyComponent = () => {
   const audioArray = useSelector((state) => state.soundTab.audioArray);
   const audioObj = useSelector((state) => state.audio.audioObj);
   const label = useSelector((state) => state.detect.label);
+  const detectRec = useSelector((state) => state.detect.detectRec);
 
   const generateCode = async () => {
     javascriptGenerator.addReservedWords("code");
     const code = javascriptGenerator.workspaceToCode(workspace);
-    if (code === "detect_object") {
+
+    const lines = code.split("\n");    
+
+    // Filter out lines containing "detect_object"
+    const filteredLines = lines.filter(line => !line.includes("detect_object"));    
+
+    if(filteredLines.length < lines.length)
       setdetectedObjectsCode(true);
-    } else {
-      dispatch(setCodeString(code));
-      await eval(`(async () => { ${code} })();`);
-    }
+    // Join the filtered lines back into a single string
+    const filteredCode = filteredLines.join("\n");
+   
+    dispatch(setCodeString(filteredCode));
+    await eval(`(async () => { ${filteredCode} })();`);
+    
   };
 
   const displayCodeString = () => {
@@ -87,12 +97,7 @@ const BlocklyComponent = () => {
     );
     // Use the below rather than the above to debug the code if required as it displays perfect code
     // return copyString;
-  };
-
-  // function getObjects(){
-  //   // Format the detected objects as code
-  //   console.log();
-  // }
+  };  
 
   // To handle Wavesurfer object
   useEffect(() => {
@@ -126,6 +131,7 @@ const BlocklyComponent = () => {
         // Get the current block definition
         const oldDefinition_play = Blockly.Blocks["play_sound"];
         const oldDefLabel = Blockly.Blocks["label"];
+        const oldDefDetect = Blockly.Blocks["detection"];
 
         // Create a new block definition with the updated field value
         const newDefinition_play = {
@@ -152,16 +158,35 @@ const BlocklyComponent = () => {
           init: function () {
             this.appendDummyInput()
               .appendField("label:")
-              .appendField(new Blockly.FieldCheckbox(label), "FIELDNAME");
+              .appendField(new Blockly.FieldCheckbox(label), "LABEL");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+            this.setTooltip("Name the Objects in the video stream");
+
+          },
+        };
+        const newDefDetect = {
+          ...oldDefDetect,
+          init: function () {
+            this.appendDummyInput()
+              .appendField("Detect:")
+              .appendField(new Blockly.FieldCheckbox(detectRec), "DETECT");
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
             this.setColour(230);
             this.setTooltip("Detect the Objects in the video stream");
+
           },
         };
-        // Unregister the old block
+
+        // Unregister the old block        
         delete Blockly.Blocks["play_sound"];
         Blockly.Blocks["play_sound"] = newDefinition_play;
+        delete Blockly.Blocks["label"];
+        Blockly.Blocks["label"] = newDefLabel;
+        delete Blockly.Blocks["detection"];
+        Blockly.Blocks["detection"] = newDefDetect;
 
         // Clear the workspace and add the new block
         workspace.clear();
