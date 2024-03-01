@@ -18,7 +18,11 @@ import ZoomIn from "./Canvas/ZoomIn";
 import ZoomOut from "./Canvas/ZoomOut";
 import FullScreen from "./Canvas/FullScreen";
 
-import { setDetectedObjs } from "../features/detection.js";
+import {
+  setDetectedObjs,
+  setLabel,
+  setDetectRec,
+} from "../features/detection.js";
 import { useDispatch } from "react-redux";
 
 const Canvas = () => {
@@ -27,10 +31,12 @@ const Canvas = () => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const [Detect, setDetect] = useState(false);
-  const [Label, setLabel] = useState(false);
+  // const [Detect, setDetect] = useState(false);
+  // const [Label, setLabel] = useState(false);
 
-  const detectedObj = useSelector(state => state.detect.objectArr);
+  const detectedObj = useSelector((state) => state.detect.objectArr);
+  const label = useSelector((state) => state.detect.label);
+  const detectRec = useSelector((state) => state.detect.detectRec);
 
   const dispatch = useDispatch();
 
@@ -49,11 +55,13 @@ const Canvas = () => {
   };
 
   const handleDetect = () => {
-    setDetect((prev) => !prev);
+    // setDetect((prev) => !prev);
+    dispatch(setDetectRec(!detectRec));
   };
 
   const handleLabel = () => {
-    setLabel((prev) => !prev);
+    // setLabel((prev) => !prev);
+    dispatch(setLabel(!label));
   };
 
   const detect = async (net) => {
@@ -135,7 +143,9 @@ const Canvas = () => {
           background: `url(localVideo)`,
         }}
       >
-        {Label && <div>{detectedObj.map(obj => `Detected object: ${obj.class}`).join('\n')}</div>}
+        {label && (
+          <div>{detectedObj.map((obj) => `${obj.class}, `).join("\n")}</div>
+        )}
         <h1 style={{ textAlign: "center", fontSize: "14px" }}>Canvas</h1>
         {isCameraOn && (
           <header className="App-header">
@@ -155,7 +165,7 @@ const Canvas = () => {
               }}
             />
 
-            {Detect && (
+            {detectRec && (
               <canvas
                 ref={canvasRef}
                 style={{
@@ -231,21 +241,24 @@ const Canvas = () => {
             width: "100%",
           }}
         >
-          {isCameraOn && 
-              <div style={{ paddingLeft: "10px" }}>
+          {isCameraOn && (
+            <div style={{ paddingLeft: "10px" }}>
               <Button onClick={handleDetect}>
                 Detect
                 <Switch
-                  checked={Detect}
+                  checked={detectRec}
                   // onChange={handleToggleCamera}
                 />
               </Button>
               <Button onClick={handleLabel}>
                 Label
-                <Switch checked={Label && Detect} onChange={handleToggleCamera} />
+                <Switch
+                  checked={label && detectRec}
+                  onChange={handleToggleCamera}
+                />
               </Button>
             </div>
-          }
+          )}
         </div>
       </Card>
     </div>

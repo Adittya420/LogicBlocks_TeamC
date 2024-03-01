@@ -52,40 +52,45 @@ const BlocklyComponent = () => {
   const workspace = Blockly.getMainWorkspace();
   const { codeString } = useSelector((state) => ({
     codeString: state.code.codeString,
-  }));  
-  const detectedObj = useSelector(state => state.detect.objectArr);
-  const [detectedObjectsCode, setdetectedObjectsCode] = useState(false);  
-  
-  const audioArray = useSelector(state => state.soundTab.audioArray);
-  const audioObj = useSelector(state => state.audio.audioObj);
-  
+  }));
+  const detectedObj = useSelector((state) => state.detect.objectArr);
+  const [detectedObjectsCode, setdetectedObjectsCode] = useState(false);
+
+  const audioArray = useSelector((state) => state.soundTab.audioArray);
+  const audioObj = useSelector((state) => state.audio.audioObj);
+  const label = useSelector((state) => state.detect.label);
+
   const generateCode = async () => {
     javascriptGenerator.addReservedWords("code");
     const code = javascriptGenerator.workspaceToCode(workspace);
-    if(code === "detect_object"){
+    if (code === "detect_object") {
       setdetectedObjectsCode(true);
-    }
-    else{
+    } else {
       dispatch(setCodeString(code));
       await eval(`(async () => { ${code} })();`);
     }
-
   };
 
   const displayCodeString = () => {
     const copyString = codeString;
     var detectedObjString = "";
-    if(detectedObjectsCode)
-      detectedObjString = detectedObj.map(obj => `Detected object: ${obj.class}`).join('\n')
+    if (detectedObjectsCode)
+      detectedObjString = detectedObj
+        .map((obj) => `Detected object: ${obj.class}`)
+        .join("\n");
 
     // Use a regular expression to remove store.dispatch() calls for display and display inner contents
-    return detectedObjString + "\n" +copyString.replace(/store\.dispatch\((.*?)\);/g, "sprite.$1");
+    return (
+      detectedObjString +
+      "\n" +
+      copyString.replace(/store\.dispatch\((.*?)\);/g, "sprite.$1")
+    );
     // Use the below rather than the above to debug the code if required as it displays perfect code
     // return copyString;
   };
 
-  // function getObjects(){    
-  //   // Format the detected objects as code    
+  // function getObjects(){
+  //   // Format the detected objects as code
   //   console.log();
   // }
 
@@ -96,18 +101,16 @@ const BlocklyComponent = () => {
     }
   }, [wavesurferObj]);
 
-  function playSound(soundname){    
-
-    const foundSound = audioArray.find(sound => sound.fileName === soundname);
+  function playSound(soundname) {
+    const foundSound = audioArray.find((sound) => sound.fileName === soundname);
     if (foundSound) {
-        return foundSound.audioUrl;
+      return foundSound.audioUrl;
     } else {
-        console.log("Sound not found in audioArray");
-        return "defaultsound.wav"; // Or return a default sound URL, or handle the case accordingly
+      console.log("Sound not found in audioArray");
+      return "defaultsound.wav"; // Or return a default sound URL, or handle the case accordingly
     }
-
-  }  
-  function getSound(){
+  }
+  function getSound() {
     return audioObj;
   }
 
@@ -121,7 +124,8 @@ const BlocklyComponent = () => {
         clearInterval(intervalId);
 
         // Get the current block definition
-        const oldDefinition_play = Blockly.Blocks["play_sound"];        
+        const oldDefinition_play = Blockly.Blocks["play_sound"];
+        const oldDefLabel = Blockly.Blocks["label"];
 
         // Create a new block definition with the updated field value
         const newDefinition_play = {
@@ -130,17 +134,34 @@ const BlocklyComponent = () => {
             this.appendDummyInput().appendField("Set Sound");
             this.appendDummyInput()
               .appendField("Sound Name:")
-              .appendField(new Blockly.FieldDropdown(audioArray.map(sound => [sound.fileName, sound.fileName])), "SOUND_NAME");
+              .appendField(
+                new Blockly.FieldDropdown(
+                  audioArray.map((sound) => [sound.fileName, sound.fileName])
+                ),
+                "SOUND_NAME"
+              );
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
             this.setColour(230);
             this.setTooltip("Play a sound");
           },
-        };        
+        };
 
+        const newDefLabel = {
+          ...oldDefLabel,
+          init: function () {
+            this.appendDummyInput()
+              .appendField("label:")
+              .appendField(new Blockly.FieldCheckbox(label), "FIELDNAME");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+            this.setTooltip("Detect the Objects in the video stream");
+          },
+        };
         // Unregister the old block
-        delete Blockly.Blocks['play_sound'];        
-        Blockly.Blocks['play_sound'] = newDefinition_play;        
+        delete Blockly.Blocks["play_sound"];
+        Blockly.Blocks["play_sound"] = newDefinition_play;
 
         // Clear the workspace and add the new block
         workspace.clear();
