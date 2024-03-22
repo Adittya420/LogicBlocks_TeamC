@@ -4,6 +4,7 @@ import Blockly from "blockly";
 import { Logic } from "./BlockCategories/Logic";
 import { Loops } from "./BlockCategories/Loops";
 import { Math } from "./BlockCategories/Math";
+import { TechableMachine } from "./BlockCategories/TeachableMachine";
 import { Text } from "./BlockCategories/Text";
 import initializeBlockly from "./InitializeBlockly"; // import the function
 import { Sounds } from "./BlockCategories/Sounds";
@@ -196,7 +197,68 @@ const BlocklyComponent = () => {
     // Cleanup interval on component unmount
     return () => clearInterval(intervalId);
   }, []); // Empty dependency array ensures this runs only once on mount
+  useEffect(() => {
+  // Wait for the Blockly workspace to be ready
+  const intervalId = setInterval(() => {
+    const workspace = Blockly.getMainWorkspace();
+    if (workspace) {
+      // Blockly workspace is ready
+      clearInterval(intervalId);
 
+      // Get the current block definitions
+      const oldDefs = {
+        use_model: Blockly.Blocks["use_model"],
+        when_model_detects: Blockly.Blocks["when_model_detects"],
+        model_prediction: Blockly.Blocks["model_prediction"],
+        prediction_is: Blockly.Blocks["prediction_is"],
+        turn_video: Blockly.Blocks["turn_video"],
+        set_video_transparency: Blockly.Blocks["set_video_transparency"],
+      };
+
+      // Create new block definitions with updated field values if needed
+      const newDefs = {
+        use_model: {
+          ...oldDefs.use_model,
+          init: function () {
+            this.appendDummyInput()
+              .appendField("use model")
+              .appendField(new Blockly.FieldTextInput("Paste URL Here"), "MODEL_URL");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+            this.setTooltip("Load the Teachable Machine model from the provided URL");
+          },
+        },
+        when_model_detects: {
+          ...oldDefs.when_model_detects,
+          init: function () {
+            this.appendDummyInput()
+              .appendField("when model detects")
+              .appendField(new Blockly.FieldDropdown([["Class 1", "CLASS_1"], ["Class 2", "CLASS_2"]]), "DETECTED_CLASS");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(230);
+            this.setTooltip("Set the class that the model detects");
+          },
+        },
+        // Add other blocks as needed with similar structure
+      };
+
+      // Unregister old block definitions
+      Object.keys(oldDefs).forEach((blockType) => {
+        delete Blockly.Blocks[blockType];
+      });
+
+      // Register new block definitions
+      Object.keys(newDefs).forEach((blockType) => {
+        Blockly.Blocks[blockType] = newDefs[blockType];
+      });
+
+      // Clear the workspace and add the new blocks
+      workspace.clear();
+    }
+  }, 100); // Check every 100 milliseconds
+}, []); // Empty dependency array ensures this runs only once on moun
   useEffect(() => {
     if (blocklyRef.current === null) {
       Blockly.setLocale("en");
@@ -210,6 +272,7 @@ const BlocklyComponent = () => {
           ${Motion}
           ${Control}
           ${Object}
+          ${TechableMachine}
         </xml>
       `;
       initializeBlockly(toolboxXml);

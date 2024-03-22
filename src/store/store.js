@@ -8,6 +8,7 @@ import codeReducer from "../features/codeSlice";
 import cameraReducer from "../features/cameraSlice";
 
 import detectReducer from "../features/detection";
+import TechableReducer from "../features/Techable";
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     code: codeReducer, // Add the code reducer to the store
     camera: cameraReducer,
     detect: detectReducer,
+    techable: TechableReducer,
   },
   initialState,
 });
